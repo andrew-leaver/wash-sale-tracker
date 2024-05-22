@@ -17,14 +17,14 @@ def run_test(infile, outfile):
     lots.sort(cmp=lots_lib.Lot.cmp_by_buy_date)
     expected.sort(cmp=lots_lib.Lot.cmp_by_buy_date)
     if not lots.contents_equal(expected):
-        print 'Test failed: {}'.format(infile)
-        print 'Got result:'
+        print('Test failed: {}'.format(infile))
+        print('Got result:')
         lots.do_print()
-        print 'Expected:'
+        print('Expected:')
         expected.do_print()
-        print '\n\n'
+        print('\n\n')
     else:
-        print "Test passed: {}".format(infile)
+        print("Test passed: {}".format(infile))
 
 
 def main():

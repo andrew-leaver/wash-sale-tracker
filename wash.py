@@ -3,6 +3,7 @@ import copy
 import datetime
 import lots as lots_lib
 import logger as logger_lib
+import functools
 
 def _split_lot(num_shares, lot, lots, logger, type_of_lot,
                existing_loss_lot=None, existing_replacement_lot=None):
@@ -81,7 +82,8 @@ def best_replacement_lot(loss_lot, lots):
         have more or fewer shares than the loss_lot.
     """
     # Replacement lots must be chosen oldest first.
-    lots.sort(cmp=lots_lib.Lot.cmp_by_original_buy_date)
+    #lots.sort(cmp=lots_lib.Lot.cmp_by_original_buy_date)
+    lots.sort(key = functools.cmp_to_key(lots_lib.Lot.cmp_by_original_buy_date))
     possible_replacement_lots = []
     for lot in lots:
         if abs(loss_lot.sell_date - lot.buy_date) > datetime.timedelta(days=30):
@@ -127,7 +129,8 @@ def earliest_loss_lot(lots):
     Returns:
         A Lot, or None.
     """
-    lots.sort(cmp=lots_lib.Lot.cmp_by_sell_date)
+    #lots.sort(cmp=lots_lib.Lot.cmp_by_sell_date)
+    lots.sort(key = functools.cmp_to_key(lots_lib.Lot.cmp_by_sell_date))
     for lot in lots:
         if not lot.is_loss():
             continue
@@ -191,6 +194,7 @@ def wash_one_lot(loss_lot, lots, logger=logger_lib.NullLogger()):
     replacement_lot.adjusted_basis += loss_lot.adjustment
     replacement_lot.adjusted_buy_date -= (
         loss_lot.sell_date - loss_lot.adjusted_buy_date)
+    print("Adjusted the buy date by ", loss_lot.sell_date - loss_lot.adjusted_buy_date)
 
     logger.print_lots('Adjusted basis and buy date',
                       lots,
